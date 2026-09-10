@@ -6,7 +6,7 @@ ENV NODE_ENV=production \
 WORKDIR /app
 
 # Install system deps required by optional native modules (Alpine uses apk)
-RUN apk add --no-cache python3 make g++ ca-certificates openssl
+RUN apk add --no-cache python3 make g++ ca-certificates openssl libc6-compat
 
 # Enable Corepack for Yarn
 RUN corepack enable
@@ -79,7 +79,7 @@ WORKDIR /app
 
 # Install only production system dependencies (Alpine uses apk)
 # sudo: allows non-root user to chown the Railway-mounted volume at startup
-RUN apk add --no-cache ca-certificates openssl sudo
+RUN apk add --no-cache ca-certificates openssl sudo libc6-compat
 
 # Enable Corepack for Yarn
 RUN corepack enable
@@ -180,7 +180,7 @@ ENV NODE_ENV=development     NEXT_TELEMETRY_DISABLED=1     TURBO_CACHE_DIR=/app/
 
 WORKDIR /app
 
-RUN apk add --no-cache python3 make g++ ca-certificates openssl
+RUN apk add --no-cache python3 make g++ ca-certificates openssl libc6-compat
 RUN corepack enable
 
 # Copy workspace manifests first so dependency installs stay cached across source-only changes.
@@ -244,7 +244,7 @@ WORKDIR /app
 
 # Build toolchain kept: the entrypoint's fallback `yarn install` (stale
 # lockfile vs prebuilt image) still compiles native modules.
-RUN apk add --no-cache python3 make g++ ca-certificates openssl
+RUN apk add --no-cache python3 make g++ ca-certificates openssl libc6-compat
 RUN corepack enable
 
 # Prebuilt artifacts, staged OUTSIDE /app because the repo bind mount masks
