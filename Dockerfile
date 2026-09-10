@@ -46,7 +46,7 @@ COPY scripts/official-modules-setup.mjs ./scripts/
 COPY scripts/lib/official-modules.mjs ./scripts/lib/
 
 # Install all dependencies (including devDependencies for build).
-RUN yarn install --immutable
+RUN yarn install --immutable || (sleep 5 && yarn install --immutable)
 
 # Copy source files after dependencies are installed.
 COPY packages/ ./packages/
@@ -232,7 +232,7 @@ COPY --from=builder /app/packages/ui/package.json ./packages/ui/
 COPY --from=builder /app/packages/webhooks/package.json ./packages/webhooks/
 
 # Install only production dependencies
-RUN yarn workspaces focus @open-mercato/app --production
+RUN yarn workspaces focus @open-mercato/app --production || (sleep 5 && yarn workspaces focus @open-mercato/app --production)
 
 # Copy workspace sources after production dependencies are installed.
 COPY --from=builder /app/packages/ ./packages/
