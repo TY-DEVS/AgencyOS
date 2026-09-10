@@ -1,7 +1,9 @@
 services:
   app:
+    image: agencyos-app:latest
     build:
       context: .
+      target: runner
       args:
         - CONTAINER_PORT=${CONTAINER_PORT:-3000}
     restart: unless-stopped
@@ -65,10 +67,7 @@ services:
         condition: service_healthy
 
   mcp:
-    build:
-      context: .
-      args:
-        - CONTAINER_PORT=${CONTAINER_PORT:-3000}
+    image: agencyos-app:latest
     restart: unless-stopped
     user: "0"
     command:
