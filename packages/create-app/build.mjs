@@ -106,6 +106,9 @@ if (guidesFound > 0) {
   console.log(`Discovered ${guidesFound} standalone guides → dist/agentic.staging/guides/`)
 }
 
+if (process.env.SKIP_MODULE_FACTS === '1') {
+  console.log('[module-facts] SKIP_MODULE_FACTS=1: skipping AST fact-sheet generation for fast build')
+} else {
 // Generate per-module fact-sheets (Layer 2) for every package-provided module via
 // the reusable ts-morph extractor + resolver-routed discovery in @open-mercato/cli.
 // Emits one markdown sheet per discovered module plus legacy-v1 and corrected-v2
@@ -237,6 +240,7 @@ if (sources.length > 0) {
   throw new Error(
     '[module-facts] no readable package module sources were discovered; refusing to build an empty knowledge layer',
   )
+}
 }
 
 // Publish the staged tree. A reader either sees the complete previous build or the complete new

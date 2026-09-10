@@ -96,31 +96,34 @@ await buildPackage(packageDir, {
       console.log(`Discovered ${guidesFound} standalone guides → dist/agentic.staging/guides/`)
     }
 
-    // Generate per-module fact-sheets plus legacy-v1 and corrected-v2 JSON sidecars
-    // for every package-provided module via the freshly built ts-morph extractor and
-    // resolver-routed discovery, so
-    // `mercato agentic:init` bundles the same guides as a create-mercato-app scaffold
-    // (packages/create-app/build.mjs). Discovery goes through the resolver, never a
-    // hardcoded packages/* path (.ai/lessons/standalone-scaffolding-and-generators-must-not-assume.md).
-    const {
-      assertPackageModuleFactsOnly,
-      extractAllModuleFacts,
-      extractLocalReferenceModuleFacts,
-      renderModuleFactsJson,
-      renderReferenceModuleFactsJson,
-    } = await import(pathToFileURL(join(outdir, 'lib', 'generators', 'module-facts.js')).href)
-    const { discoverLocalReferenceModuleSource, discoverPackageModuleSources } = await import(
-      pathToFileURL(join(outdir, 'lib', 'generators', 'module-facts-discovery.js')).href
-    )
-    const { createResolver } = await import(pathToFileURL(join(outdir, 'lib', 'resolver.js')).href)
+    if (process.env.SKIP_MODULE_FACTS === '1') {
+      console.log('[module-facts] SKIP_MODULE_FACTS=1: skipping AST fact-sheet generation for fast build')
+    } else {
+      // Generate per-module fact-sheets plus legacy-v1 and corrected-v2 JSON sidecars
+      // for every package-provided module via the freshly built ts-morph extractor and
+      // resolver-routed discovery, so
+      // `mercato agentic:init` bundles the same guides as a create-mercato-app scaffold
+      // (packages/create-app/build.mjs). Discovery goes through the resolver, never a
+      // hardcoded packages/* path (.ai/lessons/standalone-scaffolding-and-generators-must-not-assume.md).
+      const {
+        assertPackageModuleFactsOnly,
+        extractAllModuleFacts,
+        extractLocalReferenceModuleFacts,
+        renderModuleFactsJson,
+        renderReferenceModuleFactsJson,
+      } = await import(pathToFileURL(join(outdir, 'lib', 'generators', 'module-facts.js')).href)
+      const { discoverLocalReferenceModuleSource, discoverPackageModuleSources } = await import(
+        pathToFileURL(join(outdir, 'lib', 'generators', 'module-facts-discovery.js')).href
+      )
+      const { createResolver } = await import(pathToFileURL(join(outdir, 'lib', 'resolver.js')).href)
 
-    // Mirrors packages/create-app/build.mjs: the disabled app-local example never enters
-    // the normal package outputs and is projected into its own reference bundle so
-    // `mercato agentic:init` bundles exactly what a create-mercato-app scaffold does.
-    const REFERENCE_MODULE_IDS = ['example']
+      // Mirrors packages/create-app/build.mjs: the disabled app-local example never enters
+      // the normal package outputs and is projected into its own reference bundle so
+      // `mercato agentic:init` bundles exactly what a create-mercato-app scaffold does.
+      const REFERENCE_MODULE_IDS = ['example']
 
-    const sources = discoverPackageModuleSources(createResolver(join(packagesDir, '..')))
-    if (sources.length > 0) {
+      const sources = discoverPackageModuleSources(createResolver(join(packagesDir, '..')))
+      if (sources.length > 0) {
       const registryPath = join(packagesDir, '..', 'apps', 'mercato', '.mercato', 'generated', 'modules.runtime.generated.ts')
       let coreVersion = null
       try {
@@ -195,6 +198,7 @@ await buildPackage(packageDir, {
       )
     } else {
       console.warn('[module-facts] no package modules discovered; skipping fact-sheet generation')
+    }
     }
 
     // Publish the staged tree. A reader either sees the complete previous build or the complete new

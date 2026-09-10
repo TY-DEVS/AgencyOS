@@ -61,9 +61,10 @@ COPY eslint.config.mjs ./
 
 
 # Build the app
-# Limit Node.js heap to 4GB and reduce worker count to avoid OOM in constrained Docker environments
-ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN yarn build
+# Allocate 8GB heap and skip agentic fact-sheet extraction for fast, deterministic container build
+ENV NODE_OPTIONS="--max-old-space-size=8192" \
+    SKIP_MODULE_FACTS="1"
+RUN yarn build:packages && yarn generate && yarn build:app
 
 
 # Production stage
