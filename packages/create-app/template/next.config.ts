@@ -25,6 +25,14 @@ const nextConfig: NextConfig & { agentRules?: boolean } = {
   // from the template, so let Next 16.3+ leave them alone rather than
   // appending its managed agent-rules block on every `next dev`.
   agentRules: false,
+  typescript: {
+    // Type checking is handled in CI via `yarn typecheck` with the native compiler
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    // Linting is handled in CI via `yarn lint`
+    ignoreDuringBuilds: true,
+  },
   experimental: {
     serverMinification: false,
     turbopackMinify: false,

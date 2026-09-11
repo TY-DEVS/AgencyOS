@@ -27,6 +27,14 @@ const nextConfig: NextConfig & { agentRules?: boolean } = {
   // chain with a ratcheted byte budget (yarn agents:check-budget), so the
   // generated files would be untracked churn outside that system.
   agentRules: false,
+  typescript: {
+    // Type checking is handled in CI via `yarn typecheck` with the native compiler
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    // Linting is handled in CI via `yarn lint`
+    ignoreDuringBuilds: true,
+  },
   experimental: {
     serverMinification: false,
     turbopackMinify: false,
