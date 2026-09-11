@@ -96,8 +96,8 @@ await buildPackage(packageDir, {
       console.log(`Discovered ${guidesFound} standalone guides → dist/agentic.staging/guides/`)
     }
 
-    if (process.env.SKIP_MODULE_FACTS === '1') {
-      console.log('[module-facts] SKIP_MODULE_FACTS=1: skipping AST fact-sheet generation for fast build')
+    if (process.env.SKIP_MODULE_FACTS === '1' || existsSync('/.dockerenv')) {
+      console.log('[module-facts] SKIP_MODULE_FACTS=1 or Docker build detected: skipping AST fact-sheet generation for fast build')
     } else {
       // Generate per-module fact-sheets plus legacy-v1 and corrected-v2 JSON sidecars
       // for every package-provided module via the freshly built ts-morph extractor and

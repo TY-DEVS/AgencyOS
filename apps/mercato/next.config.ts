@@ -31,10 +31,6 @@ const nextConfig: NextConfig & { agentRules?: boolean } = {
     // Type checking is handled in CI via `yarn typecheck` with the native compiler
     ignoreBuildErrors: true,
   },
-  eslint: {
-    // Linting is handled in CI via `yarn lint`
-    ignoreDuringBuilds: true,
-  },
   experimental: {
     serverMinification: false,
     turbopackMinify: false,

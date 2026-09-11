@@ -1,7 +1,8 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "concurrency": "32",
-  "globalEnv": ["NODE_ENV"],
+  "globalEnv": ["NODE_ENV", "SKIP_MODULE_FACTS"],
+  "globalPassThroughEnv": ["SKIP_MODULE_FACTS"],
   "globalDependencies": ["scripts/build-package.mjs", "scripts/watch.mjs", "scripts/lib/add-js-extension.mjs"],
   "tasks": {
     "build": {
