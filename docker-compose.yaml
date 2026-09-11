@@ -1,11 +1,11 @@
 services:
   app:
     image: agencyos-app:latest
-    build:
-      context: .
-      target: runner
-      args:
-        - CONTAINER_PORT=${CONTAINER_PORT:-3000}
+    # build:
+    #   context: .
+    #   target: runner
+    #   args:
+    #     - CONTAINER_PORT=${CONTAINER_PORT:-3000}
     restart: unless-stopped
     user: "0"
     command:
