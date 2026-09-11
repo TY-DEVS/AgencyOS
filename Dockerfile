@@ -64,7 +64,7 @@ COPY eslint.config.mjs ./
 # Allocate 8GB heap and skip agentic fact-sheet extraction for fast, deterministic container build
 ENV NODE_OPTIONS="--max-old-space-size=8192" \
     SKIP_MODULE_FACTS="1"
-RUN yarn build:packages && yarn generate && yarn build:app
+RUN yarn build
 
 
 # Production stage
