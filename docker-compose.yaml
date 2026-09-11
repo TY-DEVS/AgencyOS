@@ -19,7 +19,7 @@ services:
         INIT_COMMAND='yarn mercato init' sh /app/docker/scripts/init-or-migrate.sh
         yarn start
     volumes:
-      - init_marker:/tmp/init-marker
+      - init_marker_v2:/tmp/init-marker
       - attachments_storage:/app/apps/mercato/storage
       - mcp_shared:/run/mcp-shared:ro
     working_dir: /app/apps/mercato
@@ -173,7 +173,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-open-mercato}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_v2:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
       interval: 10s
@@ -209,10 +209,10 @@ services:
       retries: 5
 
 volumes:
-  postgres_data:
+  postgres_data_v2:
   redis_data:
   meilisearch_data:
-  init_marker:
+  init_marker_v2:
   attachments_storage:
   mcp_shared:
 
