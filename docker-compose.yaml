@@ -27,6 +27,27 @@ services:
       - "3000:3000"
     expose:
       - "3000"
+    networks:
+      - default
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.gzip.compress=true"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.http-0-dmgagycqiijfxq6w9lch32t1.entryPoints=http"
+      - "traefik.http.routers.http-0-dmgagycqiijfxq6w9lch32t1.middlewares=redirect-to-https"
+      - "traefik.http.routers.http-0-dmgagycqiijfxq6w9lch32t1.rule=Host(`dmgagycqiijfxq6w9lch32t1.ty-dev.site`) && PathPrefix(`/`)"
+      - "traefik.http.routers.http-0-dmgagycqiijfxq6w9lch32t1.service=http-0-dmgagycqiijfxq6w9lch32t1"
+      - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.entryPoints=https"
+      - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.middlewares=gzip"
+      - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.rule=Host(`dmgagycqiijfxq6w9lch32t1.ty-dev.site`) && PathPrefix(`/`)"
+      - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.service=https-0-dmgagycqiijfxq6w9lch32t1"
+      - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.tls=true"
+      - "traefik.http.services.http-0-dmgagycqiijfxq6w9lch32t1.loadbalancer.server.port=3000"
+      - "traefik.http.services.https-0-dmgagycqiijfxq6w9lch32t1.loadbalancer.server.port=3000"
+      - "traefik.docker.network=coolify"
+      - "caddy_ingress_network=coolify"
     environment:
       TENANT_DATA_ENCRYPTION: ${TENANT_DATA_ENCRYPTION:-true}
       TENANT_DATA_ENCRYPTION_DEBUG: ${TENANT_DATA_ENCRYPTION_DEBUG:-false}
@@ -85,6 +106,19 @@ services:
       - "3001:3001"
     expose:
       - "3001"
+    networks:
+      - default
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=coolify"
+      - "traefik.http.routers.mcp-https.entryPoints=https"
+      - "traefik.http.routers.mcp-https.rule=Host(`dmgagycqiijfxq6w9lch32t1.ty-dev.site`) && PathPrefix(`/mcp`)"
+      - "traefik.http.routers.mcp-https.priority=100"
+      - "traefik.http.routers.mcp-https.tls=true"
+      - "traefik.http.routers.mcp-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.mcp-https.service=mcp-service"
+      - "traefik.http.services.mcp-service.loadbalancer.server.port=3001"
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       NODE_OPTIONS: ${MCP_NODE_OPTIONS:---max-old-space-size=2048}
@@ -174,3 +208,8 @@ volumes:
   init_marker:
   attachments_storage:
   mcp_shared:
+
+networks:
+  coolify:
+    external: true
+  default:
