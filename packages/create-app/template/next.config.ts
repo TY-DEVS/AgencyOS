@@ -42,6 +42,21 @@ const nextConfig: NextConfig & { agentRules?: boolean } = {
       : {}),
   },
   allowedDevOrigins: allowedDevOrigins.length > 0 ? allowedDevOrigins : undefined,
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve = config.resolve || {}
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        net: false,
+        tls: false,
+        fs: false,
+        dns: false,
+        child_process: false,
+        perf_hooks: false,
+      }
+    }
+    return config
+  },
   // Transpile @open-mercato packages that have TypeScript in src/
   // Note: @open-mercato/shared is excluded as it has pre-built dist/ files
   transpilePackages: [

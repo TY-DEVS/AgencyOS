@@ -49,6 +49,21 @@ const nextConfig: NextConfig & { agentRules?: boolean } = {
     // Monorepo root is two levels up from apps/mercato
     root: path.resolve(process.cwd(), "../.."),
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve = config.resolve || {}
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        net: false,
+        tls: false,
+        fs: false,
+        dns: false,
+        child_process: false,
+        perf_hooks: false,
+      }
+    }
+    return config
+  },
   allowedDevOrigins: allowedDevOrigins.length > 0 ? allowedDevOrigins : undefined,
   // Externalize packages that are only used in CLI context, not Next.js
   serverExternalPackages: [
