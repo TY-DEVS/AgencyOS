@@ -56,7 +56,10 @@ services:
       NODE_OPTIONS: ${NODE_OPTIONS:---max-old-space-size=3072}
       PORT: ${CONTAINER_PORT:-3000}
       HOSTNAME: 0.0.0.0
-      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-open-mercato}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-open-mercato}
+      DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-open-mercato}}
       DB_POOL_MAX: ${DB_POOL_MAX:-20}
       DB_POOL_MIN: ${DB_POOL_MIN:-2}
       JWT_SECRET: ${JWT_SECRET}
@@ -122,7 +125,10 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       NODE_OPTIONS: ${MCP_NODE_OPTIONS:---max-old-space-size=2048}
-      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-open-mercato}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-open-mercato}
+      DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-open-mercato}}
       CACHE_REDIS_URL: redis://redis:6379
       CACHE_STRATEGY: redis
       AUTO_SPAWN_WORKERS: "false"
@@ -131,6 +137,7 @@ services:
       MEILISEARCH_API_KEY: ${MEILISEARCH_MASTER_KEY:-meilisearch-dev-key}
       JWT_SECRET: ${JWT_SECRET}
       APP_URL: http://app:3000
+      APP_WAIT_URL: http://app:3000
       NEXT_PUBLIC_APP_URL: ${APP_URL:-http://localhost:3000}
       TENANT_DATA_ENCRYPTION: ${TENANT_DATA_ENCRYPTION:-true}
       TENANT_DATA_ENCRYPTION_FALLBACK_KEY: ${TENANT_DATA_ENCRYPTION_FALLBACK_KEY:-dev-tenant-encryption-fallback-key-32chars}

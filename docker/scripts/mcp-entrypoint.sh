@@ -17,7 +17,7 @@
 # stays readable at the end of `docker compose logs mcp`, and the healthcheck
 # correctly reports unhealthy until the server actually serves.
 
-APP_WAIT_URL="${APP_URL:-http://app:3000}"
+APP_WAIT_URL="${APP_WAIT_URL:-${APP_URL:-http://app:3000}}"
 TIMEOUT="${MCP_WAIT_FOR_APP_TIMEOUT:-1800}"
 KEY_FILE="${MCP_SERVER_API_KEY_FILE:-${MCP_API_KEY_FILE:-/run/mcp-shared/mcp-api-key}}"
 PORT="${MCP_PORT:-3001}"
