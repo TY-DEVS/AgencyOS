@@ -38,11 +38,11 @@ services:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.routers.http-0-dmgagycqiijfxq6w9lch32t1.entryPoints=http"
       - "traefik.http.routers.http-0-dmgagycqiijfxq6w9lch32t1.middlewares=redirect-to-https"
-      - "traefik.http.routers.http-0-dmgagycqiijfxq6w9lch32t1.rule=Host(`dmgagycqiijfxq6w9lch32t1.ty-dev.site`) && PathPrefix(`/`)"
+      - "traefik.http.routers.http-0-dmgagycqiijfxq6w9lch32t1.rule=Host(`os.ty-dev.site`) && PathPrefix(`/`)"
       - "traefik.http.routers.http-0-dmgagycqiijfxq6w9lch32t1.service=http-0-dmgagycqiijfxq6w9lch32t1"
       - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.entryPoints=https"
       - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.middlewares=gzip"
-      - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.rule=Host(`dmgagycqiijfxq6w9lch32t1.ty-dev.site`) && PathPrefix(`/`)"
+      - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.rule=Host(`os.ty-dev.site`) && PathPrefix(`/`)"
       - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.service=https-0-dmgagycqiijfxq6w9lch32t1"
       - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.tls.certresolver=letsencrypt"
       - "traefik.http.routers.https-0-dmgagycqiijfxq6w9lch32t1.tls=true"
@@ -65,7 +65,7 @@ services:
       DB_POOL_MAX: ${DB_POOL_MAX:-20}
       DB_POOL_MIN: ${DB_POOL_MIN:-2}
       JWT_SECRET: ${JWT_SECRET}
-      APP_URL: ${APP_URL:-http://localhost:3000}
+      APP_URL: ${APP_URL:-https://os.ty-dev.site}
       CACHE_REDIS_URL: redis://agencyos-redis:6379
       CACHE_STRATEGY: redis
       RATE_LIMIT_STRATEGY: ${RATE_LIMIT_STRATEGY:-memory}
@@ -123,10 +123,10 @@ services:
       - "traefik.docker.network=coolify"
       - "traefik.http.routers.mcp-http.entryPoints=http"
       - "traefik.http.routers.mcp-http.middlewares=redirect-to-https"
-      - "traefik.http.routers.mcp-http.rule=(Host(`dmgagycqiijfxq6w9lch32t1.ty-dev.site`) || Host(`os.ty-dev.site`)) && PathPrefix(`/mcp`)"
+      - "traefik.http.routers.mcp-http.rule=Host(`os.ty-dev.site`) && PathPrefix(`/mcp`)"
       - "traefik.http.routers.mcp-https.entryPoints=https"
       - "traefik.http.routers.mcp-https.middlewares=gzip"
-      - "traefik.http.routers.mcp-https.rule=(Host(`dmgagycqiijfxq6w9lch32t1.ty-dev.site`) || Host(`os.ty-dev.site`)) && PathPrefix(`/mcp`)"
+      - "traefik.http.routers.mcp-https.rule=Host(`os.ty-dev.site`) && PathPrefix(`/mcp`)"
       - "traefik.http.routers.mcp-https.priority=100"
       - "traefik.http.routers.mcp-https.tls=true"
       - "traefik.http.routers.mcp-https.tls.certresolver=letsencrypt"
@@ -148,7 +148,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       APP_URL: http://agencyos-app:3000
       APP_WAIT_URL: http://agencyos-app:3000
-      NEXT_PUBLIC_APP_URL: ${APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_URL: ${APP_URL:-https://os.ty-dev.site}
       TENANT_DATA_ENCRYPTION: ${TENANT_DATA_ENCRYPTION:-true}
       TENANT_DATA_ENCRYPTION_FALLBACK_KEY: ${TENANT_DATA_ENCRYPTION_FALLBACK_KEY:-dev-tenant-encryption-fallback-key-32chars}
       OM_INIT_SUPERADMIN_EMAIL: ${OM_INIT_SUPERADMIN_EMAIL:-contact.tydev@gmail.com}
