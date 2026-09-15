@@ -19,7 +19,7 @@ services:
         INIT_COMMAND='yarn mercato init' sh /app/docker/scripts/init-or-migrate.sh
         yarn start
     volumes:
-      - init_marker_v2:/tmp/init-marker
+      - init_marker_v3:/tmp/init-marker
       - attachments_storage:/app/apps/mercato/storage
       - mcp_shared:/run/mcp-shared:ro
     working_dir: /app/apps/mercato
@@ -116,7 +116,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=coolify"
+      - "traefik.http.routers.mcp-http.entryPoints=http"
+      - "traefik.http.routers.mcp-http.middlewares=redirect-to-https"
+      - "traefik.http.routers.mcp-http.rule=(Host(`dmgagycqiijfxq6w9lch32t1.ty-dev.site`) || Host(`os.ty-dev.site`)) && PathPrefix(`/mcp`)"
       - "traefik.http.routers.mcp-https.entryPoints=https"
+      - "traefik.http.routers.mcp-https.middlewares=gzip"
       - "traefik.http.routers.mcp-https.rule=(Host(`dmgagycqiijfxq6w9lch32t1.ty-dev.site`) || Host(`os.ty-dev.site`)) && PathPrefix(`/mcp`)"
       - "traefik.http.routers.mcp-https.priority=100"
       - "traefik.http.routers.mcp-https.tls=true"
@@ -174,7 +178,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-open-mercato}
     volumes:
-      - postgres_data_v2:/var/lib/postgresql/data
+      - postgres_data_v3:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
       interval: 10s
@@ -210,10 +214,10 @@ services:
       retries: 5
 
 volumes:
-  postgres_data_v2:
+  postgres_data_v3:
   redis_data:
   meilisearch_data:
-  init_marker_v2:
+  init_marker_v3:
   attachments_storage:
   mcp_shared:
 
