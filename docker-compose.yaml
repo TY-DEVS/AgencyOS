@@ -16,10 +16,9 @@ services:
           echo "ERROR: init-or-migrate.sh not found."
           exit 1
         fi
-        INIT_COMMAND='yarn mercato init' sh /app/docker/scripts/init-or-migrate.sh
-        yarn start
+        INIT_COMMAND='yarn mercato init' sh /app/docker/scripts/init-or-migrate.sh && yarn start
     volumes:
-      - init_marker_v4:/tmp/init-marker
+      - init_marker_v5:/tmp/init-marker
       - attachments_storage:/app/apps/mercato/storage
       - mcp_shared:/run/mcp-shared:ro
     working_dir: /app/apps/mercato
@@ -28,8 +27,11 @@ services:
     expose:
       - "3000"
     networks:
-      - default
-      - coolify
+      default:
+        aliases:
+          - agencyos-app
+          - app
+      coolify:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.gzip.compress=true"
@@ -59,12 +61,12 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dda3f4fe3649e66d6ec532d8c1880175}
       POSTGRES_DB: ${POSTGRES_DB:-open-mercato}
-      DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-dda3f4fe3649e66d6ec532d8c1880175}@postgres:5432/${POSTGRES_DB:-open-mercato}}
+      DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-dda3f4fe3649e66d6ec532d8c1880175}@agencyos-postgres:5432/${POSTGRES_DB:-open-mercato}}
       DB_POOL_MAX: ${DB_POOL_MAX:-20}
       DB_POOL_MIN: ${DB_POOL_MIN:-2}
       JWT_SECRET: ${JWT_SECRET}
       APP_URL: ${APP_URL:-http://localhost:3000}
-      CACHE_REDIS_URL: redis://redis:6379
+      CACHE_REDIS_URL: redis://agencyos-redis:6379
       CACHE_STRATEGY: redis
       RATE_LIMIT_STRATEGY: ${RATE_LIMIT_STRATEGY:-memory}
       ENABLE_CRUD_API_CACHE: ${ENABLE_CRUD_API_CACHE:-true}
@@ -75,12 +77,12 @@ services:
       GOOGLE_GENERATIVE_AI_API_KEY: ${GOOGLE_GENERATIVE_AI_API_KEY:-}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
       OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-}
-      MEILISEARCH_HOST: http://meilisearch:7700
+      MEILISEARCH_HOST: http://agencyos-meilisearch:7700
       MEILISEARCH_API_KEY: ${MEILISEARCH_MASTER_KEY:-meilisearch-dev-key}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-contact.tydev@gmail.com}
       OM_INIT_SUPERADMIN_EMAIL: ${OM_INIT_SUPERADMIN_EMAIL:-contact.tydev@gmail.com}
       OM_INIT_SUPERADMIN_PASSWORD: ${OM_INIT_SUPERADMIN_PASSWORD:-password}
-      MCP_URL: http://mcp:3001
+      MCP_URL: http://agencyos-mcp:3001
       MCP_SERVER_API_KEY_FILE: /run/mcp-shared/mcp-api-key
     depends_on:
       postgres:
@@ -111,8 +113,11 @@ services:
     expose:
       - "3001"
     networks:
-      - default
-      - coolify
+      default:
+        aliases:
+          - agencyos-mcp
+          - mcp
+      coolify:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=coolify"
@@ -133,16 +138,16 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dda3f4fe3649e66d6ec532d8c1880175}
       POSTGRES_DB: ${POSTGRES_DB:-open-mercato}
-      DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-dda3f4fe3649e66d6ec532d8c1880175}@postgres:5432/${POSTGRES_DB:-open-mercato}}
-      CACHE_REDIS_URL: redis://redis:6379
+      DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-dda3f4fe3649e66d6ec532d8c1880175}@agencyos-postgres:5432/${POSTGRES_DB:-open-mercato}}
+      CACHE_REDIS_URL: redis://agencyos-redis:6379
       CACHE_STRATEGY: redis
       AUTO_SPAWN_WORKERS: "false"
       AUTO_SPAWN_SCHEDULER: "false"
-      MEILISEARCH_HOST: http://meilisearch:7700
+      MEILISEARCH_HOST: http://agencyos-meilisearch:7700
       MEILISEARCH_API_KEY: ${MEILISEARCH_MASTER_KEY:-meilisearch-dev-key}
       JWT_SECRET: ${JWT_SECRET}
-      APP_URL: http://app:3000
-      APP_WAIT_URL: http://app:3000
+      APP_URL: http://agencyos-app:3000
+      APP_WAIT_URL: http://agencyos-app:3000
       NEXT_PUBLIC_APP_URL: ${APP_URL:-http://localhost:3000}
       TENANT_DATA_ENCRYPTION: ${TENANT_DATA_ENCRYPTION:-true}
       TENANT_DATA_ENCRYPTION_FALLBACK_KEY: ${TENANT_DATA_ENCRYPTION_FALLBACK_KEY:-dev-tenant-encryption-fallback-key-32chars}
@@ -173,13 +178,18 @@ services:
   postgres:
     image: pgvector/pgvector:pg17-trixie
     restart: unless-stopped
+    networks:
+      default:
+        aliases:
+          - agencyos-postgres
+          - postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dda3f4fe3649e66d6ec532d8c1880175}
       POSTGRES_DB: ${POSTGRES_DB:-open-mercato}
       POSTGRES_HOST_AUTH_METHOD: "trust"
     volumes:
-      - postgres_data_v4:/var/lib/postgresql/data
+      - postgres_data_v5:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
       interval: 10s
@@ -189,6 +199,11 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    networks:
+      default:
+        aliases:
+          - agencyos-redis
+          - redis
     volumes:
       - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
       - redis_data:/data
@@ -202,6 +217,11 @@ services:
   meilisearch:
     image: getmeili/meilisearch:v1.11
     restart: unless-stopped
+    networks:
+      default:
+        aliases:
+          - agencyos-meilisearch
+          - meilisearch
     environment:
       MEILI_ENV: development
       MEILI_MASTER_KEY: ${MEILISEARCH_MASTER_KEY:-meilisearch-dev-key}
@@ -215,10 +235,10 @@ services:
       retries: 5
 
 volumes:
-  postgres_data_v4:
+  postgres_data_v5:
   redis_data:
   meilisearch_data:
-  init_marker_v4:
+  init_marker_v5:
   attachments_storage:
   mcp_shared:
 
