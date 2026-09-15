@@ -1,11 +1,7 @@
 services:
   app:
     image: agencyos-app:latest
-    build:
-      context: .
-      target: runner
-      args:
-        - CONTAINER_PORT=${CONTAINER_PORT:-3000}
+    pull_policy: never
     restart: unless-stopped
     user: "0"
     command:
@@ -92,6 +88,7 @@ services:
 
   mcp:
     image: agencyos-app:latest
+    pull_policy: never
     restart: unless-stopped
     user: "0"
     command:
@@ -116,7 +113,7 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=coolify"
       - "traefik.http.routers.mcp-https.entryPoints=https"
-      - "traefik.http.routers.mcp-https.rule=Host(`dmgagycqiijfxq6w9lch32t1.ty-dev.site`) && PathPrefix(`/mcp`)"
+      - "traefik.http.routers.mcp-https.rule=(Host(`dmgagycqiijfxq6w9lch32t1.ty-dev.site`) || Host(`os.ty-dev.site`)) && PathPrefix(`/mcp`)"
       - "traefik.http.routers.mcp-https.priority=100"
       - "traefik.http.routers.mcp-https.tls=true"
       - "traefik.http.routers.mcp-https.tls.certresolver=letsencrypt"
